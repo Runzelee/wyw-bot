@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "node-fetch": "^2.6.1",
+    "node-telegram-bot-api": "^0.57.0"
+  },
+  "scripts": {
+    "start": "node main.js"
+  }
+}
