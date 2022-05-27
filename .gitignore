@@ -2,3 +2,5 @@ node_modules
 package-lock.json
 .vscode
 dev_config.js
+.env
+test.js

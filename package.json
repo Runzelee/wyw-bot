@@ -1,9 +1,13 @@
 {
   "dependencies": {
+    "cheerio": "^1.0.0-rc.11",
     "node-fetch": "^2.6.1",
     "node-telegram-bot-api": "^0.57.0"
   },
   "scripts": {
     "start": "node main.js"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1"
   }
 }
