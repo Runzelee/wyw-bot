@@ -244,7 +244,8 @@ function arrangeSearch(data, count, total) {
             }
         }
     }
-    _msg += `第${(count - 1) / 5 + 1}页，共${Math.ceil((total - 1) / 5)}页。`;
+    //console.log(total);
+    _msg += `第${(count - 1) / 5 + 1}页，共${getPageAmount(total)}页。`;
     //console.log(_msg);
     return _msg;
 }
@@ -255,6 +256,12 @@ function arrangeItemContent(title, dynasty, author, content, if_display_full) {
     if (content.length > 100 && !if_display_full) _msg += `${content.substring(0, 100)}\\.\\.\\.`;
     else _msg += content;
     return _msg;
+}
+
+function getPageAmount(total) {
+    var total_page = Math.ceil((total - 1) / 5);
+    if (total_page === 0) total_page = 1;
+    return total_page;
 }
 
 async function search(q, type, msg) {
@@ -295,9 +302,9 @@ async function search(q, type, msg) {
     bot.on('callback_query', async function (query) {
         //console.log(query.data);
         if (query.data === `up&${msg.chat.id}&${msg.message_id}`) {
-            if (count / 5 + 1 < Math.ceil((data.length - 1) / 5)) count += 5;
+            if (count / 5 + 1 < getPageAmount(data.length)) count += 5;
             //提前判断防止趁editMessageText还没执行完狂点下一页导致溢出，下面的向上切换同理
-            if (count / 5 + 1 === Math.ceil((data.length - 1) / 5)) {
+            if (count / 5 + 1 === getPageAmount(data.length)) {
                 bot.editMessageText(arrangeSearch(data.slice(count, data.length - 1), count + 1, data.length), opts(count + 1, data.length - 1 - count, 1));
             } else bot.editMessageText(arrangeSearch(data.slice(count, count + 5), count + 1, data.length), opts(count + 1, 5, 0));
         }
@@ -309,7 +316,7 @@ async function search(q, type, msg) {
         if (query.data === `reload&${msg.chat.id}&${msg.message_id}`) {
             if (data.length < 5) {
                 bot.editMessageText(arrangeSearch(data.slice(0, data.length), 1, data.length), opts(1, data.length, 3));
-            } else if (count / 5 + 1 === Math.ceil((data.length - 1) / 5)) {
+            } else if (count / 5 + 1 === getPageAmount(data.length)) {
                 bot.editMessageText(arrangeSearch(data.slice(count, data.length - 1), count + 1, data.length), opts(count + 1, data.length - 1 - count, 1));
             } else if (count <= 0) bot.editMessageText(arrangeSearch(data.slice(0, 5), 1, data.length), opts(1, 5, 2));
             else bot.editMessageText(arrangeSearch(data.slice(count, count + 5), count + 1, data.length), opts(count + 1, 5, 0));
@@ -343,6 +350,8 @@ async function search(q, type, msg) {
                 var _msg = arrangeItemContent(item[0], item[1], item[2], item[3], true);
                 //电报消息4096长度限制，否则400 Bad Request: MESSAGE_TOO_LONG
                 if (_msg.length > 4000) _msg = `${_msg.substring(0, 4000)}\\.\\.\\.\n\n全文过长，请查看原链接阅读全文。`
+                _msg += '\n\nvia @runze\\_bot';
+                //console.log(_msg);
                 var _see_full_keyboard = see_full_keyboard(order, href, 2);
             }
             bot.editMessageText(_msg, _opts(_see_full_keyboard));
