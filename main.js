@@ -1,10 +1,10 @@
 const bot = require('./prod_config');
 //const { _env, bot } = require("./dev_config");
-const MD5 = require('./md5');
+const MD5 = require('./utils/md5');
 const fetch = require('node-fetch');
 const https = require('https');
 const cheerio = require('cheerio');
-const replaceIllegalChar = require('./char_replace');
+const replaceIllegalChar = require('./utils/char_replace');
 
 bot.onText(/(\/start$)|(\/start\s+)/, msg => {
     bot.sendMessage(msg.chat.id,
