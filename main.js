@@ -244,7 +244,7 @@ function arrangeSearch(data, count, total) {
             }
         }
     }
-    _msg += `第${(count - 1) / 5 + 1}页，共${Math.ceil(total / 5)}页。`;
+    _msg += `第${(count - 1) / 5 + 1}页，共${Math.ceil((total - 1) / 5)}页。`;
     //console.log(_msg);
     return _msg;
 }
@@ -295,9 +295,9 @@ async function search(q, type, msg) {
     bot.on('callback_query', async function (query) {
         //console.log(query.data);
         if (query.data === `up&${msg.chat.id}&${msg.message_id}`) {
-            if (count / 5 + 1 < Math.ceil(data.length / 5)) count += 5;
+            if (count / 5 + 1 < Math.ceil((data.length - 1) / 5)) count += 5;
             //提前判断防止趁editMessageText还没执行完狂点下一页导致溢出，下面的向上切换同理
-            if (count / 5 + 1 === Math.ceil(data.length / 5)) {
+            if (count / 5 + 1 === Math.ceil((data.length - 1) / 5)) {
                 bot.editMessageText(arrangeSearch(data.slice(count, data.length - 1), count + 1, data.length), opts(count + 1, data.length - 1 - count, 1));
             } else bot.editMessageText(arrangeSearch(data.slice(count, count + 5), count + 1, data.length), opts(count + 1, 5, 0));
         }
@@ -309,7 +309,7 @@ async function search(q, type, msg) {
         if (query.data === `reload&${msg.chat.id}&${msg.message_id}`) {
             if (data.length < 5) {
                 bot.editMessageText(arrangeSearch(data.slice(0, data.length), 1, data.length), opts(1, data.length, 3));
-            } else if (count / 5 + 1 === Math.ceil(data.length / 5)) {
+            } else if (count / 5 + 1 === Math.ceil((data.length - 1) / 5)) {
                 bot.editMessageText(arrangeSearch(data.slice(count, data.length - 1), count + 1, data.length), opts(count + 1, data.length - 1 - count, 1));
             } else if (count <= 0) bot.editMessageText(arrangeSearch(data.slice(0, 5), 1, data.length), opts(1, 5, 2));
             else bot.editMessageText(arrangeSearch(data.slice(count, count + 5), count + 1, data.length), opts(count + 1, 5, 0));
