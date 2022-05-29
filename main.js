@@ -350,8 +350,6 @@ async function search(q, type, msg) {
                 var _msg = arrangeItemContent(item[0], item[1], item[2], item[3], true);
                 //电报消息4096长度限制，否则400 Bad Request: MESSAGE_TOO_LONG
                 if (_msg.length > 4000) _msg = `${_msg.substring(0, 4000)}\\.\\.\\.\n\n全文过长，请查看原链接阅读全文。`
-                _msg += '\n\nvia @runze\\_bot';
-                //console.log(_msg);
                 var _see_full_keyboard = see_full_keyboard(order, href, 2);
             }
             bot.editMessageText(_msg, _opts(_see_full_keyboard));
