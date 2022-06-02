@@ -55,7 +55,7 @@ bot.onText(/(\/mo2tr$)|(\/mo2tr\s+)/, msg => {
 bot.onText(/(\/tr2mo$)|(\/tr2mo\s+)/, msg => {
     if (msg.text.match(/\/tr2mo$/)) {
         bot.sendMessage(msg.chat.id,
-            "请输入要翻译的内容。\n\n用法：/mo2tr \\[内容\\]",
+            "请输入要翻译的内容。\n\n用法：/tr2mo \\[内容\\]",
             { parse_mode: 'MarkdownV2' }
         );
     }
@@ -106,12 +106,12 @@ bot.onText(/(\/rsearch$)|(\/rsearch\s+)/, msg => {
     }
 })
 
-async function translate(q, isReserve) {
+async function translate(q, isReverse) {
     let url = 'https://fanyi-api.baidu.com/api/trans/vip/translate';
     let salt = Math.floor(Math.random() * (9999999999 - 1000000000)) + 1000000000;
     let app_id = process.env.APP_ID;
     let sign = MD5(app_id + q + salt + process.env.KEY);
-    if (!isReserve) var fromTo = 'from=zh&to=wyw';
+    if (!isReverse) var fromTo = 'from=zh&to=wyw';
     else var fromTo = 'from=wyw&to=zh';
     try {
         const response = await fetch(`${url}?q=${encodeURI(q)}&${fromTo}&appid=${app_id}&salt=${salt}&sign=${sign}`);
@@ -293,7 +293,7 @@ async function search(q, type, msg) {
     var data = await getSearchData(q, type);
     var count = 0;
     if (data.length === 0) bot.editMessageText('没有搜索结果，搜搜其他的吧！', _opts([]));
-    else if (data.length < 5 && data.length !== 0) {
+    else if (data.length <= 5 && data.length !== 0) {
         bot.editMessageText(arrangeSearch(data.slice(0, data.length), 1, data.length), opts(1, data.length, 3));
     } else {
         bot.editMessageText(arrangeSearch(data.slice(0, 5), 1, data.length), opts(1, 5, 2));
@@ -314,7 +314,7 @@ async function search(q, type, msg) {
             else bot.editMessageText(arrangeSearch(data.slice(count, count + 5), count + 1, data.length), opts(count + 1, 5, 0));
         }
         if (query.data === `reload&${msg.chat.id}&${msg.message_id}`) {
-            if (data.length < 5) {
+            if (data.length <= 5) {
                 bot.editMessageText(arrangeSearch(data.slice(0, data.length), 1, data.length), opts(1, data.length, 3));
             } else if (count / 5 + 1 === getPageAmount(data.length)) {
                 bot.editMessageText(arrangeSearch(data.slice(count, data.length - 1), count + 1, data.length), opts(count + 1, data.length - 1 - count, 1));
